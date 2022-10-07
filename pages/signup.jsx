@@ -1,7 +1,60 @@
-import React from "react";
+import React, { useState } from "react";
+import axios from "axios";
+import { useRouter } from "next/router";
 import Link from "next/link";
 
+// import {useForm} from "react-hook-form"
+// import {yupResolver} from "@hookform/resolvers/yup"
+// import * as yup from "yup"
+// //form validation
+// const schema = yup.object().shape({
+//     name: yup.string().required("Please fill the gap"),
+//     email: yup.string().email().required("Please enter email"),
+//     password: yup.string().min(4).max(32).required("Password required"),
+//     confirmPassword: yup.string().oneOf([yup.ref("password"), null]),
+// })
+
 const signup = () => {
+  const [data, SetData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const [error, setError] = useState("");
+  const router = useRouter();
+
+  const handleChange = (e) => {
+    SetData({ ...data, [e.target.name]: e.target.value });
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const { name, email, password, confirmPassword } = data;
+
+    if (name == "" && email == "" && password == "" && confirmPassword == "") {
+      setError("please provide all the information");
+      return;
+    }
+
+    if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+      setError("Please enter your email");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError("Your password do not match");
+      return;
+    }
+    try {
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/register`,
+        data
+      );
+      router.push("/");
+    } catch (error) {
+      setError(error.message);
+    }
+  };
   return (
     <div class="flex items-center justify-center min-h-screen bg-gray-100">
       <div class="px-8 py-6 mx-4 mt-4 text-left bg-white shadow-lg md:w-1/3 lg:w-1/3 sm:w-1/3">
@@ -24,7 +77,8 @@ const signup = () => {
           </svg>
         </div>
         <h3 class="text-2xl font-bold text-center">Join us</h3>
-        <form action="">
+        {error & <p>{error}</p>}
+        <form onSubmit={handleSubmit}>
           <div class="mt-4">
             <div>
               <label class="block" for="Name">
@@ -33,7 +87,12 @@ const signup = () => {
               <input
                 type="text"
                 placeholder="Name"
-                class="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600"
+                name="name"
+                id="name"
+                class="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none 
+                                focus:ring-1 focus:ring-blue-600"
+                onChange={handleChange}
+                value={data.name}
               />
             </div>
             <div class="mt-4">
@@ -41,9 +100,14 @@ const signup = () => {
                 Email
               </label>
               <input
-                type="text"
+                type="email"
                 placeholder="Email"
-                class="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600"
+                name="email"
+                id="email"
+                class="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none 
+                                focus:ring-1 focus:ring-blue-600"
+                onChange={handleChange}
+                value={data.email}
               />
             </div>
             <div class="mt-4">
@@ -51,7 +115,12 @@ const signup = () => {
               <input
                 type="password"
                 placeholder="Password"
-                class="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600"
+                id="password"
+                name="password"
+                class="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 
+                                focus:ring-blue-600"
+                onChange={handleChange}
+                value={data.password}
               />
             </div>
             <div class="mt-4">
@@ -59,12 +128,21 @@ const signup = () => {
               <input
                 type="password"
                 placeholder="Password"
-                class="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600"
+                id="confirmPassword"
+                name="confirmPassword"
+                class="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none 
+                                focus:ring-1 focus:ring-blue-600"
+                onChange={handleChange}
+                value={data.confirmPassword}
               />
             </div>
             <span class="text-xs text-teal-400">Password must be same!</span>
             <div class="flex">
-              <button class="w-full px-6 py-2 mt-4 text-white bg-blue-600 rounded-lg hover:bg-blue-900">
+              <button
+                type="submit"
+                class="w-full px-6 py-2 mt-4 text-white bg-blue-600 rounded-lg 
+                    hover:bg-blue-900"
+              >
                 Create Account
               </button>
             </div>
@@ -82,5 +160,4 @@ const signup = () => {
     </div>
   );
 };
-
 export default signup;
