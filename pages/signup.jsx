@@ -3,17 +3,6 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import Link from "next/link";
 
-// import {useForm} from "react-hook-form"
-// import {yupResolver} from "@hookform/resolvers/yup"
-// import * as yup from "yup"
-// //form validation
-// const schema = yup.object().shape({
-//     name: yup.string().required("Please fill the gap"),
-//     email: yup.string().email().required("Please enter email"),
-//     password: yup.string().min(4).max(32).required("Password required"),
-//     confirmPassword: yup.string().oneOf([yup.ref("password"), null]),
-// })
-
 const signup = () => {
   const [data, SetData] = useState({
     name: "",
@@ -46,22 +35,27 @@ const signup = () => {
       return;
     }
     try {
+      console.log(data);
       await axios.post(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/register`,
         data
       );
-      router.push("/");
+      router.push("/login");
     } catch (error) {
-      setError(error.message);
+      console.log(error);
+      setError(error.response.data.message);
     }
   };
   return (
-    <div class="flex items-center justify-center min-h-screen bg-gray-100">
-      <div class="px-8 py-6 mx-4 mt-4 text-left bg-white shadow-lg md:w-1/3 lg:w-1/3 sm:w-1/3">
-        <div class="flex justify-center">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-sky-500 to-indigo-500">
+      <div
+        className="px-8 py-6 mx-4 mt-4 mb-4 text-left bg-white shadow-lg md:w-1/3 
+        lg:w-1/3 sm:w-1/3 shadow-cyan-500/50 rounded-md"
+      >
+        <div className="flex justify-center">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="w-20 h-20 text-blue-600"
+            className="w-20 h-20 text-blue-600"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -76,12 +70,12 @@ const signup = () => {
             />
           </svg>
         </div>
-        <h3 class="text-2xl font-bold text-center">Join us</h3>
-        {error & <p>{error}</p>}
+        <h3 className="text-2xl font-bold text-center">Join us</h3>
         <form onSubmit={handleSubmit}>
-          <div class="mt-4">
+          {error && <p>{error}</p>}
+          <div className="mt-4">
             <div>
-              <label class="block" for="Name">
+              <label className="block" htmlFor="Name">
                 Name
               </label>
               <input
@@ -89,14 +83,14 @@ const signup = () => {
                 placeholder="Name"
                 name="name"
                 id="name"
-                class="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none 
+                className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none 
                                 focus:ring-1 focus:ring-blue-600"
                 onChange={handleChange}
                 value={data.name}
               />
             </div>
-            <div class="mt-4">
-              <label class="block" for="email">
+            <div className="mt-4">
+              <label className="block" htmlFor="email">
                 Email
               </label>
               <input
@@ -104,54 +98,58 @@ const signup = () => {
                 placeholder="Email"
                 name="email"
                 id="email"
-                class="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none 
+                className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none 
                                 focus:ring-1 focus:ring-blue-600"
                 onChange={handleChange}
                 value={data.email}
               />
             </div>
-            <div class="mt-4">
-              <label class="block">Password</label>
+            <div className="mt-4">
+              <label className="block">Password</label>
               <input
                 type="password"
                 placeholder="Password"
                 id="password"
                 name="password"
-                class="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 
+                className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 
                                 focus:ring-blue-600"
                 onChange={handleChange}
                 value={data.password}
               />
             </div>
-            <div class="mt-4">
-              <label class="block">Confirm Password</label>
+            <div className="mt-4">
+              <label className="block">Confirm Password</label>
               <input
                 type="password"
                 placeholder="Password"
                 id="confirmPassword"
                 name="confirmPassword"
-                class="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none 
+                className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none 
                                 focus:ring-1 focus:ring-blue-600"
                 onChange={handleChange}
                 value={data.confirmPassword}
               />
             </div>
-            <span class="text-xs text-teal-400">Password must be same!</span>
-            <div class="flex">
+            <span className="text-xs text-teal-400">
+              Password must be same!
+            </span>
+            <div className="flex">
               <button
                 type="submit"
-                class="w-full px-6 py-2 mt-4 text-white bg-blue-600 rounded-lg 
+                className="w-full px-6 py-2 mt-4 text-white bg-blue-600 rounded-lg 
                     hover:bg-blue-900"
               >
                 Create Account
               </button>
             </div>
-            <div class="mt-6 text-grey-dark">
+            <div className="mt-6 text-grey-dark">
               Already have an account?
               <Link href="/login">
-                <a class="text-blue-600 hover:underline" href="#">
-                  Log in
-                </a>
+                <button type="submit">
+                  <a className="text-blue-600 hover:underline" href="#">
+                    Log in
+                  </a>
+                </button>
               </Link>
             </div>
           </div>
@@ -160,4 +158,5 @@ const signup = () => {
     </div>
   );
 };
+
 export default signup;

@@ -15,6 +15,7 @@ const Protected = () => {
     [status]);
   return (
     <div>
+      protected
       {status == "authenticated" ? (
         <button onClick={() => signOut({ callbackUrl: "/login" })}>
           LogOut

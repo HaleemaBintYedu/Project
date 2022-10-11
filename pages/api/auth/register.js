@@ -9,19 +9,25 @@ async function handler(req, res) {
   }
   const { name, email, password } = req.body;
   await db.connect();
+
   // check if the email is not in use
   const emailExists = await User.findOne({ email });
+
   if (emailExists) {
-    res.status(409).json({ error: "Email already exists" });
+    res.status(409).json({ message: "Email is already exists" });
     await db.disconnect();
     return;
   }
-  const hashedPasssword = await bcrypt.hash(password, 12);
+
+  const hashedPassword = await bcrypt.hash(password, 12);
   const user = await User.create({
     name,
     email,
-    password: hashedPasssword,
+    password: hashedPassword,
   });
+  await db.disconnect();
+
   res.status(201).json({ user });
 }
+
 export default handler;

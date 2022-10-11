@@ -1,14 +1,12 @@
 import NextAuth from "next-auth";
-import CredentialsProviders from "next-auth/providers/credentials";
+import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
-// import { signIn, signOut } from "next-auth/react";
-import { signIn } from "next-auth/react";
 import db from "../../../lib/dbConnect";
 import User from "../../../models/user";
 
 export default NextAuth({
   providers: [
-    CredentialsProviders({
+    CredentialsProvider({
       //credentials host email and the password
       type: "credentials",
       async authorize(credentials) {
@@ -18,14 +16,16 @@ export default NextAuth({
         const user = await User.findOne({
           email: credentials.email,
         });
+
         //disconnect DB
         await db.disconnect();
+
         //check for user's password
         if (user && bcrypt.compareSync(credentials.password, user.password)) {
           return {
             id: user._id,
             name: user.name,
-            email: user.password,
+            email: user.email,
           };
         }
         throw new Error("Invalid credentials");
@@ -35,5 +35,20 @@ export default NextAuth({
   pages: {
     signIn: "/login",
     error: "/login",
+  },
+  session: {
+    strategy: "jwt",
+  },
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user?._id) token._id = user._id;
+      if (user?.name) token.name = user.name;
+      return token;
+    },
+    async session({ session, token }) {
+      if (token?._id) session.user._id = token._id;
+      if (token?.name) session.user.name = token.name;
+      return session;
+    },
   },
 });
