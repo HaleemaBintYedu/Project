@@ -1,13 +1,15 @@
 import React from "react";
 import Link from "next/link";
+import Aboutus from "./about/aboutus";
+
 function HomePage() {
   return (
     <div>
       <nav>
         <div class="container mx-auto px-6 py-2 flex justify-between items-center">
-          <a class="font-bold text-2xl lg:text-4xl" href="#">
-            CAL MANAGEMENT
-          </a>
+          <Link href="/">
+            <a class="font-bold text-2xl lg:text-4xl">CAL MANAGEMENT</a>
+          </Link>
           <div class="block lg:hidden">
             <button class="flex items-center px-3 py-2 border rounded text-gray-500 border-gray-600 hover:text-gray-800 hover:border-teal-500 appearance-none focus:outline-none">
               <svg
@@ -23,32 +25,16 @@ function HomePage() {
           <div class="hidden lg:block">
             <ul class="inline-flex">
               <Link href="">
-                <li>
-                  <a class="px-4 hover:text-gray-800" href="#">
-                    Pricing
-                  </a>
-                </li>
+                <a class="px-4 hover:text-gray-800">Pricing</a>
               </Link>
               <Link href="">
-                <li>
-                  <a class="px-4 hover:text-gray-800" href="#">
-                    Premium
-                  </a>
-                </li>
+                <a class="px-4 hover:text-gray-800">Premium</a>
               </Link>
               <Link href="">
-                <li>
-                  <a class="px-4 hover:text-gray-800" href="#">
-                    Blog
-                  </a>
-                </li>
+                <a class="px-4 hover:text-gray-800">Contact</a>
               </Link>
-              <Link href="">
-                <li>
-                  <a class="px-4 hover:text-gray-800" href="#">
-                    Contact
-                  </a>
-                </li>
+              <Link href="/about/aboutus">
+                <a class="px-4 hover:text-gray-800">About</a>
               </Link>
             </ul>
           </div>
@@ -61,7 +47,7 @@ function HomePage() {
             Smart event anywhere you go.
           </h3>
 
-          <Link href="/signup">
+          <Link href="/login">
             <button class="bg-white font-bold rounded-full py-4 px-8 shadow-lg uppercase tracking-wider">
               Get started
             </button>

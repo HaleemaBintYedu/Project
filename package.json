@@ -26,6 +26,7 @@
     "react-datepicker": "^4.8.0",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.37.0",
+    "react-icalendar-link": "^3.0.2",
     "react-icons": "^4.4.0",
     "yup": "^0.32.11"
   },

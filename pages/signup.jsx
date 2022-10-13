@@ -47,10 +47,10 @@ const signup = () => {
     }
   };
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-sky-500 to-indigo-500">
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div
         className="px-8 py-6 mx-4 mt-4 mb-4 text-left bg-white shadow-lg md:w-1/3 
-        lg:w-1/3 sm:w-1/3 shadow-cyan-500/50 rounded-md"
+        lg:w-1/3 sm:w-1/3"
       >
         <div className="flex justify-center">
           <svg

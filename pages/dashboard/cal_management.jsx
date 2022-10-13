@@ -10,8 +10,11 @@ import "react-datepicker/dist/react-datepicker.css";
 import { useRouter } from "next/router";
 import axios from "axios";
 import Link from "next/link";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
+import ICalendarLink from "react-icalendar-link";
+import Ical from "./avatar";
 import { BiUserCircle } from "react-icons/bi";
+
 const locales = {
   "en-US": require("date-fns/locale/en-US"),
 };
@@ -25,20 +28,29 @@ const localizer = dateFnsLocalizer({
 
 const events = [
   {
-    title: "Big Meeting",
+    title: "",
     allDay: true,
     start: new Date(2021, 6, 0),
     end: new Date(2021, 6, 0),
+    body: "",
+    location: "",
+    attendees: [""],
   },
   {
-    title: "Vacation",
+    title: "",
+    body: "",
     start: new Date(2021, 6, 7),
     end: new Date(2021, 6, 10),
+    location: "",
+    attendees: [""],
   },
   {
-    title: "Conference",
+    title: "",
     start: new Date(2021, 6, 20),
     end: new Date(2021, 6, 23),
+    body: "",
+    location: "",
+    attendees: [""],
   },
 ];
 
@@ -52,37 +64,6 @@ const Cal_management = () => {
   const [allEvents, setAllEvents] = useState(events);
   const { data: session } = useSession();
   console.log(session);
-  // const [data, setData] = useState({
-  //     title: "",
-  //     body: "",
-  // });
-  // const [error, setError] = useState("")
-  // const router = useRouter();
-
-  // const [state, setState] = useState(false);
-
-  // const showDropdown = () => {
-  //     setState(true);
-  // }
-  // const hideDropdown = () => {
-  //     setState(false);
-  // }
-
-  // const handleChange = (e) => {
-  //     setData({...data, [e.target.name]: e.target.value});
-  // };
-
-  // const handleSubmit = async (e) => {
-  //     e.preventDefault();
-  //     try {
-  //         await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/events`, data,
-  //         );
-
-  //         router.push("/events")
-  //     } catch (error) {
-  //         setError(error.message);
-  //     }
-  // };
 
   function handleAddEvent() {
     for (let i = 0; i < allEvents.length; i++) {
@@ -111,45 +92,26 @@ const Cal_management = () => {
             hover:text-gray-700 focus:text-gray-700 navbar navbar-expand-lg shadow-lg navbar-light "
       >
         <div className="m-5 flex space-x-4">
-          <BiUserCircle className="h-8 w-8" />
-          {/* <input
-            type="file"
-            class="shadow rounded-full max-w-5 h-10 align-middle border-none"
-          /> */}
+          <BiUserCircle class="w-8 h-8" />
+          {/* <input type="file"  
+                        class="shadow rounded-full max-w-5 h-10 align-middle border-none"/> */}
           {/* class="shadow rounded-full max-w-5 h-10 align-middle border-none" */}
           <h1>{session?.user && <span>{session?.user.name}</span>}</h1>
         </div>
         <ul>
           <li className="mr-2">
-            <Link href="">
-              <a>LogOut</a>
+            <Link href="/api/auth/signIn">
+              <a
+                onClick={(e) => {
+                  e.preventDefault();
+                  signOut();
+                }}
+              >
+                LogOut
+              </a>
             </Link>
           </li>
         </ul>
-        {/* <div className=" flex flex-col" onMouseEnter={showDropdown} onMouseLeave={hideDropdown}>
-                    hhhh
-                {
-                    state ?
-                    (<ul >
-                        <Link href="">
-                            <a >
-                                Edit profile
-                            </a>
-                        </Link>
-                        <Link href="">
-                            <a >
-                                Dashboard
-                            </a>
-                        </Link>
-                        <Link href="">
-                            <a >
-                                LogOut
-                            </a>
-                        </Link>
-                    </ul> ):
-                    null
-                }
-                </div> */}
       </nav>
 
       <div className="flex">
@@ -160,6 +122,7 @@ const Cal_management = () => {
                     {error && <p>{error}</p>}</form> */}
 
             <input
+              name="title"
               className="shadow appearance-none border rounded w-64 py-2 px-3 
                   text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-2"
               type="text"
@@ -169,6 +132,27 @@ const Cal_management = () => {
                 setNewEvent({ ...newEvent, title: e.target.value })
               }
             />
+            <input
+              name="location"
+              className="shadow appearance-none border rounded w-64 py-2 px-3 
+                  text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-2"
+              type="location"
+              placeholder="Location"
+              value={newEvent.location}
+              onChange={(e) =>
+                setNewEvent({ ...newEvent, location: e.target.value })
+              }
+            />
+            <input
+              className="shadow appearance-none border rounded w-64 py-2 px-3 
+                  text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-2"
+              type="text"
+              placeholder="Attendees"
+              value={newEvent.attendees}
+              onChange={(e) =>
+                setNewEvent({ ...newEvent, attendees: e.target.value })
+              }
+            />
             <DatePicker
               className="shadow appearance-none border rounded w-64 py-2 px-3 text-gray-700 
                  leading-tight focus:outline-none focus:shadow-outline mb-2"
@@ -176,6 +160,7 @@ const Cal_management = () => {
               selected={newEvent.start}
               onChange={(start) => setNewEvent({ ...newEvent, start })}
             />
+
             <DatePicker
               className="shadow appearance-none border rounded w-64 py-2 px-3 text-gray-700 
                     leading-tight focus:outline-none focus:shadow-outline mb-2"
@@ -185,7 +170,7 @@ const Cal_management = () => {
             />
             <div class="mb-3 xl:w-96">
               <label
-                for="exampleFormControlTextarea1"
+                htmlFor="body"
                 class="justify-center items-center form-label inline-block mb-2 text-gray-700"
               >
                 Event description
@@ -203,14 +188,24 @@ const Cal_management = () => {
                 placeholder="Event description"
               ></textarea>
             </div>
-            <button
-              type="submit"
-              className="bg-blue-500 hover:bg-blue-700 text-white 
+            <div>
+              <button
+                type="submit"
+                className="bg-blue-500 hover:bg-blue-700 text-white 
                             font-bold py-2 px-4 rounded mt-2"
-              onClick={handleAddEvent}
-            >
-              Add Event
-            </button>
+                onClick={handleAddEvent}
+              >
+                Add Event
+              </button>
+              <Ical />
+              {/* <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white 
+                            font-bold py-2 px-4 rounded mt-2" onClick={handleAddEvent}>
+                            uyiyu
+                        </button> */}
+              {/* <ICalendarLink event={events}>
+        Add to Calendar
+      </ICalendarLink> */}
+            </div>
           </div>
         </div>
         <Calendar
@@ -218,7 +213,7 @@ const Cal_management = () => {
           events={allEvents}
           startAccessor="start"
           endAccessor="end"
-          style={{ height: 500, margin: "50px" }}
+          style={{ height: 700, margin: "50px" }}
         />
       </div>
     </div>
